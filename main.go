@@ -185,7 +185,7 @@ import (
 
 func main() {
 	// Define the number for which we want to calculate the factorial.
-	num := 6
+	num := 156
 
 	// Create a channel to collect results from goroutines.
 	resultChan := make(chan *big.Int, num)

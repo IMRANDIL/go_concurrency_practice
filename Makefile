@@ -1,8 +1,8 @@
 build:
-	@go build -o bin/gobank
+	@go build -o bin/goFactorial
 
 run: build
-	@./bin/gobank
+	@./bin/goFactorial
 
 test:
 	@go test -v ./...
