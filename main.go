@@ -888,67 +888,624 @@ type Result struct {
 // 	fmt.Println("Asynchronous execution completed.")
 // }
 
+// func main() {
+// 	num := 5 // Replace with the desired number.
+
+// 	// Create a WaitGroup to wait for all goroutines to finish.
+// 	var wg sync.WaitGroup
+
+// 	// Create channels to collect results.
+// 	resultChan := make(chan *big.Int)
+// 	fileResultChan := make(chan Result, 1)
+// 	excelDone := make(chan bool) // Channel to signal Excel generation completion
+
+// 	// Calculate factorial concurrently.
+// 	wg.Add(1)
+// 	go factorialAsync(num, resultChan)
+
+// 	// Store the result in a JSON file concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		factorialResult := <-resultChan
+// 		result := Result{Number: num, Factorial: factorialResult.String()}
+// 		file, err := os.Create("resultAsync.json")
+// 		if err != nil {
+// 			fmt.Println("Error creating JSON file:", err)
+// 			return
+// 		}
+// 		defer file.Close()
+// 		encoder := json.NewEncoder(file)
+// 		if err = encoder.Encode(result); err != nil {
+// 			fmt.Println("Error encoding JSON:", err)
+// 			return
+// 		}
+// 		fmt.Println("JSON file saved successfully.")
+
+// 	}()
+
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		readJSONFile("resultAsync.json", fileResultChan)
+
+// 	}()
+
+// 	// Generate the Excel file concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+
+// 		// Check if file exists
+// 		if _, err := os.Stat("resultAsync.xlsx"); !os.IsNotExist(err) {
+
+// 			// Delete existing file
+// 			err = os.Remove("resultAsync.xlsx")
+// 			if err != nil {
+// 				return
+// 			}
+
+// 		}
+
+// 		err := generateExcelAsync(fileResultChan, excelDone)
+// 		if err != nil {
+// 			fmt.Print("Error generating Excel file:", err)
+// 			return
+// 		}
+// 		fmt.Println("Excel file generated successfully.")
+
+// 	}()
+
+// 	// Wait for all goroutines to finish.
+// 	wg.Wait()
+
+// 	// Wait for Excel generation to complete.
+// 	<-excelDone
+
+// 	fmt.Println("Asynchronous execution completed.")
+// }
+
+// func main() {
+// 	num := 5 // Replace with the desired number.
+
+// 	// Create a WaitGroup to wait for all goroutines to finish.
+// 	var wg sync.WaitGroup
+
+// 	// Create channels to collect results.
+// 	resultChan := make(chan *big.Int)
+// 	jsonResultChan := make(chan Result, 1)
+// 	excelResultChan := make(chan Result, 1)
+// 	excelDone := make(chan bool) // Channel to signal Excel generation completion
+
+// 	// Calculate factorial concurrently.
+// 	wg.Add(1)
+// 	go factorialAsync(num, resultChan)
+
+// 	// Store the result in a JSON file concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		factorialResult := <-resultChan
+// 		result := Result{Number: num, Factorial: factorialResult.String()}
+// 		file, err := os.Create("resultAsync.json")
+// 		if err != nil {
+// 			fmt.Println("Error creating JSON file:", err)
+// 			return
+// 		}
+// 		defer file.Close()
+// 		encoder := json.NewEncoder(file)
+// 		if err = encoder.Encode(result); err != nil {
+// 			fmt.Println("Error encoding JSON:", err)
+// 			return
+// 		}
+// 		fmt.Println("JSON file saved successfully.")
+// 		jsonResultChan <- result // Send the result to excelResultChan as well
+// 	}()
+
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		readJSONFile("resultAsync.json", jsonResultChan)
+// 	}()
+
+// 	// Generate the Excel file concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		err := generateExcelAsync(excelResultChan, excelDone)
+// 		if err != nil {
+// 			fmt.Print("Error generating Excel file:", err)
+// 			return
+// 		}
+// 		fmt.Println("Excel file generated successfully.")
+// 	}()
+
+// 	// Wait for all goroutines to finish.
+// 	wg.Wait()
+
+// 	// Wait for Excel generation to complete.
+// 	<-excelDone
+
+// 	fmt.Println("Asynchronous execution completed.")
+// }
+
+// func main() {
+// 	num := 5 // Replace with the desired number.
+
+// 	// Create a WaitGroup to wait for all goroutines to finish.
+// 	var wg sync.WaitGroup
+
+// 	// Create channels to collect results.
+// 	resultChan := make(chan *big.Int)
+// 	jsonResultChan := make(chan Result, 1)
+// 	excelDone := make(chan bool) // Channel to signal Excel generation completion
+
+// 	// Calculate factorial concurrently.
+// 	wg.Add(1)
+// 	go factorialAsync(num, resultChan)
+
+// 	// Store the result in a JSON file concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		factorialResult := <-resultChan
+// 		result := Result{Number: num, Factorial: factorialResult.String()}
+// 		file, err := os.Create("resultAsync.json")
+// 		if err != nil {
+// 			fmt.Println("Error creating JSON file:", err)
+// 			return
+// 		}
+// 		defer file.Close()
+// 		encoder := json.NewEncoder(file)
+// 		if err = encoder.Encode(result); err != nil {
+// 			fmt.Println("Error encoding JSON:", err)
+// 			return
+// 		}
+// 		fmt.Println("JSON file saved successfully.")
+// 		jsonResultChan <- result
+// 	}()
+
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		readJSONFile("resultAsync.json", jsonResultChan)
+// 	}()
+
+// 	// Generate the Excel file concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		result := <-jsonResultChan
+// 		err := generateExcelAsync(result, excelDone)
+// 		if err != nil {
+// 			fmt.Print("Error generating Excel file:", err)
+// 			return
+// 		}
+// 		fmt.Println("Excel file generated successfully.")
+
+// 	}()
+
+// 	// Wait for all goroutines to finish.
+// 	wg.Wait()
+
+// 	// Wait for Excel generation to complete.
+// 	<-excelDone
+
+// 	fmt.Println("Asynchronous execution completed.")
+// }
+
+// func main() {
+// 	num := 5 // Replace with the desired number.
+
+// 	// Create a WaitGroup to wait for all goroutines to finish.
+// 	var wg sync.WaitGroup
+
+// 	// Create channels to collect results.
+// 	resultChan := make(chan *big.Int)
+// 	jsonResultChan := make(chan Result)
+// 	excelDone := make(chan bool) // Channel to signal Excel generation completion
+
+// 	// Calculate factorial concurrently.
+// 	wg.Add(1)
+// 	go factorialAsync(num, resultChan)
+
+// 	// Store the result in a JSON file concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		factorialResult := <-resultChan
+// 		result := Result{Number: num, Factorial: factorialResult.String()}
+// 		file, err := os.Create("resultAsync.json")
+// 		if err != nil {
+// 			fmt.Println("Error creating JSON file:", err)
+// 			return
+// 		}
+// 		defer file.Close()
+// 		encoder := json.NewEncoder(file)
+// 		if err = encoder.Encode(result); err != nil {
+// 			fmt.Println("Error encoding JSON:", err)
+// 			return
+// 		}
+// 		fmt.Println("JSON file saved successfully.")
+// 		jsonResultChan <- result
+// 	}()
+
+// 	// Read JSON result concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		result := <-jsonResultChan
+// 		readJSONFile("resultAsync.json", result, excelDone)
+// 	}()
+
+// 	// Wait for all goroutines to finish.
+// 	wg.Wait()
+
+// 	// Wait for Excel generation to complete.
+// 	<-excelDone
+
+// 	fmt.Println("Asynchronous execution completed.")
+// }
+
+// func main() {
+// 	num := 5 // Replace with the desired number.
+
+// 	// Create a WaitGroup to wait for all goroutines to finish.
+// 	var wg sync.WaitGroup
+
+// 	// Create channels to collect results.
+// 	resultChan := make(chan *big.Int)
+// 	jsonResultChan := make(chan Result)
+// 	excelDone := make(chan bool) // Channel to signal Excel generation completion
+
+// 	// Calculate factorial concurrently.
+// 	wg.Add(1)
+// 	go factorialAsync(num, resultChan)
+
+// 	// Store the result in a JSON file concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		factorialResult := <-resultChan
+// 		result := Result{Number: num, Factorial: factorialResult.String()}
+// 		file, err := os.Create("resultAsync.json")
+// 		if err != nil {
+// 			fmt.Println("Error creating JSON file:", err)
+// 			return
+// 		}
+// 		defer file.Close()
+// 		encoder := json.NewEncoder(file)
+// 		if err = encoder.Encode(result); err != nil {
+// 			fmt.Println("Error encoding JSON:", err)
+// 			return
+// 		}
+// 		fmt.Println("JSON file saved successfully.")
+// 		jsonResultChan <- result
+// 	}()
+
+// 	// Read JSON result concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		result := <-jsonResultChan
+// 		if readJSONFile("resultAsync.json", result, excelDone) {
+// 			fmt.Println("Excel file generated successfully.")
+// 		}
+// 	}()
+
+// 	// Wait for all goroutines to finish.
+// 	wg.Wait()
+
+// 	// Wait for Excel generation to complete.
+// 	<-excelDone
+
+// 	fmt.Println("Asynchronous execution completed.")
+// }
+
+// func main() {
+// 	num := 5 // Replace with the desired number.
+
+// 	// Create a WaitGroup to wait for all goroutines to finish.
+// 	var wg sync.WaitGroup
+
+// 	// Create channels to collect results.
+// 	resultChan := make(chan *big.Int)
+// 	jsonResultChan := make(chan Result)
+// 	excelDone := make(chan struct{}) // Channel to signal Excel generation completion
+
+// 	// Calculate factorial concurrently.
+// 	wg.Add(1)
+// 	go factorialAsync(num, resultChan)
+
+// 	// Store the result in a JSON file concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		factorialResult := <-resultChan
+// 		result := Result{Number: num, Factorial: factorialResult.String()}
+// 		file, err := os.Create("resultAsync.json")
+// 		if err != nil {
+// 			fmt.Println("Error creating JSON file:", err)
+// 			return
+// 		}
+// 		defer file.Close()
+// 		encoder := json.NewEncoder(file)
+// 		if err = encoder.Encode(result); err != nil {
+// 			fmt.Println("Error encoding JSON:", err)
+// 			return
+// 		}
+// 		fmt.Println("JSON file saved successfully.")
+// 		jsonResultChan <- result
+// 	}()
+
+// 	// Read JSON result concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		result := <-jsonResultChan
+// 		readJSONFile("resultAsync.json", result)
+// 	}()
+
+// 	// Generate the Excel file concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		result := <-jsonResultChan
+// 		if generateExcelAsync(result) {
+// 			fmt.Println("Excel file generated successfully.")
+// 		}
+// 		close(excelDone) // Close the channel to signal completion.
+// 	}()
+
+// 	// Wait for all goroutines to finish.
+// 	wg.Wait()
+
+// 	// Wait for Excel generation to complete.
+// 	<-excelDone
+
+// 	fmt.Println("Asynchronous execution completed.")
+// }
+
+// func main() {
+// 	num := 5 // Replace with the desired number.
+
+// 	// Create a WaitGroup to wait for all goroutines to finish.
+// 	var wg sync.WaitGroup
+
+// 	// Create channels to collect results.
+// 	resultChan := make(chan *big.Int)
+// 	jsonResultChan := make(chan Result)
+// 	excelDone := make(chan struct{}) // Channel to signal Excel generation completion
+
+// 	// Wait group for reading from jsonResultChan
+// 	var jsonReadWg sync.WaitGroup
+
+// 	// Calculate factorial concurrently.
+// 	wg.Add(1)
+// 	go factorialAsync(num, resultChan)
+
+// 	// Store the result in a JSON file concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		factorialResult := <-resultChan
+// 		result := Result{Number: num, Factorial: factorialResult.String()}
+// 		file, err := os.Create("resultAsync.json")
+// 		if err != nil {
+// 			fmt.Println("Error creating JSON file:", err)
+// 			return
+// 		}
+// 		defer file.Close()
+// 		encoder := json.NewEncoder(file)
+// 		if err = encoder.Encode(result); err != nil {
+// 			fmt.Println("Error encoding JSON:", err)
+// 			return
+// 		}
+// 		fmt.Println("JSON file saved successfully.")
+// 		jsonResultChan <- result
+// 	}()
+
+// 	// Read JSON result concurrently.
+// 	jsonReadWg.Add(1)
+// 	go func() {
+// 		defer jsonReadWg.Done()
+// 		result := <-jsonResultChan
+// 		readJSONFile("resultAsync.json", result)
+// 	}()
+
+// 	// Generate the Excel file concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		result := <-jsonResultChan
+// 		if generateExcelAsync(result) {
+// 			fmt.Println("Excel file generated successfully.")
+// 		}
+// 		close(excelDone) // Close the channel to signal completion.
+// 	}()
+
+// 	// Wait for all goroutines to finish.
+// 	wg.Wait()
+
+// 	// Wait for JSON result reading to complete.
+// 	jsonReadWg.Wait()
+
+// 	// Wait for Excel generation to complete.
+// 	<-excelDone
+
+// 	fmt.Println("Asynchronous execution completed.")
+// }
+
+// func main() {
+// 	num := 5 // Replace with the desired number.
+
+// 	// Create a WaitGroup to wait for all goroutines to finish.
+// 	var wg sync.WaitGroup
+
+// 	// Create channels to collect results.
+// 	resultChan := make(chan *big.Int)
+// 	jsonResultChan := make(chan Result)
+// 	excelDone := make(chan struct{}) // Channel to signal Excel generation completion
+
+// 	// Calculate factorial concurrently.
+// 	wg.Add(1)
+// 	go factorialAsync(num, resultChan)
+
+// 	// Store the result in a JSON file concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		factorialResult := <-resultChan
+// 		result := Result{Number: num, Factorial: factorialResult.String()}
+// 		file, err := os.Create("resultAsync.json")
+// 		if err != nil {
+// 			fmt.Println("Error creating JSON file:", err)
+// 			return
+// 		}
+// 		defer file.Close()
+// 		encoder := json.NewEncoder(file)
+// 		if err = encoder.Encode(result); err != nil {
+// 			fmt.Println("Error encoding JSON:", err)
+// 			return
+// 		}
+// 		fmt.Println("JSON file saved successfully.")
+// 		jsonResultChan <- result
+// 	}()
+
+// 	// Read JSON result concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		result := <-jsonResultChan
+// 		readJSONFile("resultAsync.json", result)
+// 	}()
+
+// 	// Generate the Excel file concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		result := <-jsonResultChan
+// 		if generateExcelAsync(result) {
+// 			fmt.Println("Excel file generated successfully.")
+// 		}
+// 		close(excelDone) // Close the channel to signal completion.
+// 	}()
+
+// 	// Wait for all goroutines to finish.
+// 	wg.Wait()
+
+// 	// Wait for Excel generation to complete.
+// 	<-excelDone
+
+// 	fmt.Println("Asynchronous execution completed.")
+// }
+
+// func main() {
+// 	num := 8 // Replace with the desired number.
+
+// 	// Calculate factorial concurrently.
+// 	resultChan := make(chan *big.Int)
+// 	go factorialAsync(num, resultChan)
+
+// 	// Store the result in a JSON file concurrently.
+// 	factorialResult := <-resultChan
+// 	result := Result{Number: num, Factorial: factorialResult.String()}
+// 	file, err := os.Create("resultAsync.json")
+// 	if err != nil {
+// 		fmt.Println("Error creating JSON file:", err)
+// 		return
+// 	}
+// 	defer file.Close()
+// 	encoder := json.NewEncoder(file)
+// 	if err = encoder.Encode(result); err != nil {
+// 		fmt.Println("Error encoding JSON:", err)
+// 		return
+// 	}
+// 	fmt.Println("JSON file saved successfully.")
+
+// 	// Wait for all goroutines to finish.
+// 	fmt.Println("Asynchronous execution completed.")
+// }
+
+// func main() {
+// 	num := 5 // Replace with the desired number.
+
+// 	// Calculate factorial concurrently.
+// 	resultChan := make(chan *big.Int)
+// 	go factorialAsync(num, resultChan)
+
+// 	// Store the result in a JSON file concurrently.
+// 	factorialResult := <-resultChan
+// 	result := Result{Number: num, Factorial: factorialResult.String()}
+// 	file, err := os.Create("resultAsync.json")
+// 	if err != nil {
+// 		fmt.Println("Error creating JSON file:", err)
+// 		return
+// 	}
+// 	defer file.Close()
+// 	encoder := json.NewEncoder(file)
+// 	if err = encoder.Encode(result); err != nil {
+// 		fmt.Println("Error encoding JSON:", err)
+// 		return
+// 	}
+// 	fmt.Println("JSON file saved successfully.")
+
+// 	// Read JSON result concurrently.
+// 	jsonResultChan := make(chan Result)
+// 	go readJSONFile("resultAsync.json", jsonResultChan)
+// 	jsonResult := <-jsonResultChan
+
+// 	// Generate the Excel file concurrently.
+// 	excelDone := make(chan bool)
+// 	go generateExcelAsync(jsonResult, excelDone)
+
+// 	// Wait for all goroutines to finish.
+// 	<-excelDone
+// 	fmt.Println("Asynchronous execution completed.")
+// }
+
 func main() {
-	num := 8 // Replace with the desired number.
-
-	// Create a WaitGroup to wait for all goroutines to finish.
-	var wg sync.WaitGroup
-
-	// Create channels to collect results.
-	resultChan := make(chan *big.Int)
-	fileResultChan := make(chan Result)
-	excelDone := make(chan bool) // Channel to signal Excel generation completion
+	num := 18 // Replace with the desired number.
 
 	// Calculate factorial concurrently.
-	wg.Add(1)
+	resultChan := make(chan *big.Int)
 	go factorialAsync(num, resultChan)
 
 	// Store the result in a JSON file concurrently.
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		factorialResult := <-resultChan
-		result := Result{Number: num, Factorial: factorialResult.String()}
-		file, err := os.Create("resultAsync.json")
-		if err != nil {
-			fmt.Println("Error creating JSON file:", err)
-			return
-		}
-		defer file.Close()
-		encoder := json.NewEncoder(file)
-		if err = encoder.Encode(result); err != nil {
-			fmt.Println("Error encoding JSON:", err)
-			return
-		}
-		fmt.Println("JSON file saved successfully.")
+	factorialResult := <-resultChan
+	result := Result{Number: num, Factorial: factorialResult.String()}
+	file, err := os.Create("resultAsync.json")
+	if err != nil {
+		fmt.Println("Error creating JSON file:", err)
+		return
+	}
+	defer file.Close()
+	encoder := json.NewEncoder(file)
+	if err = encoder.Encode(result); err != nil {
+		fmt.Println("Error encoding JSON:", err)
+		return
+	}
+	fmt.Println("JSON file saved successfully.")
 
-	}()
+	// Read JSON result concurrently.
+	jsonResultChan := make(chan Result)
+	go readJSONFile("resultAsync.json", jsonResultChan)
+	jsonResult := <-jsonResultChan
 
+	// Create a WaitGroup to wait for Excel generation to complete.
+	var wg sync.WaitGroup
 	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		readJSONFile("resultAsync.json", fileResultChan, &wg)
-		close(fileResultChan)
-	}()
 
 	// Generate the Excel file concurrently.
-	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		err := generateExcelAsync(fileResultChan, excelDone)
-		if err != nil {
-			fmt.Print("Error generating Excel file:", err)
-			return
+		if generateExcelAsync(jsonResult) {
+			fmt.Println("Excel file generated successfully.")
+		} else {
+			fmt.Println("Error generating Excel file.")
 		}
-		fmt.Println("Excel file generated successfully.")
-
 	}()
-
-	// Wait for Excel generation to complete.
-	<-excelDone
 
 	// Wait for all goroutines to finish.
 	wg.Wait()
-
 	fmt.Println("Asynchronous execution completed.")
 }

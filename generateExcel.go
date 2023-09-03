@@ -4,16 +4,168 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"sync"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
-func readJSONFile(filename string, fileResultChan chan<- Result, wg *sync.WaitGroup) {
-	defer wg.Done()
+// func readJSONFile(filename string, fileResultChan chan<- Result) {
+
+// 	// Open the JSON file for reading.
+// 	file, err := os.Open(filename)
+
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return
+// 	}
+// 	defer file.Close()
+
+// 	// Create a variable to hold the decoded JSON data.
+// 	var resultData Result
+
+// 	// Create a JSON decoder and decode the file into the resultData variable.
+// 	decoder := json.NewDecoder(file)
+// 	if err := decoder.Decode(&resultData); err != nil {
+// 		fmt.Println(err)
+// 		return
+// 	}
+
+// 	fileResultChan <- resultData
+// 	close(fileResultChan)
+// }
+
+// func readJSONFile(filename string, fileResultChan chan<- Result) {
+// 	// Open the JSON file for reading.
+// 	file, err := os.Open(filename)
+
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return
+// 	}
+// 	defer file.Close()
+
+// 	// Create a variable to hold the decoded JSON data.
+// 	var resultData Result
+
+// 	// Create a JSON decoder and decode the file into the resultData variable.
+// 	decoder := json.NewDecoder(file)
+// 	if err := decoder.Decode(&resultData); err != nil {
+// 		fmt.Println(err)
+// 		return
+// 	}
+
+// 	fileResultChan <- resultData
+// }
+
+// func readJSONFile(filename string, fileResultChan chan<- Result) {
+// 	// Open the JSON file for reading.
+// 	file, err := os.Open(filename)
+
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return
+// 	}
+// 	defer file.Close()
+
+// 	// Create a variable to hold the decoded JSON data.
+// 	var resultData Result
+
+// 	// Create a JSON decoder and decode the file into the resultData variable.
+// 	decoder := json.NewDecoder(file)
+// 	if err := decoder.Decode(&resultData); err != nil {
+// 		fmt.Println(err)
+// 		return
+// 	}
+
+// 	fileResultChan <- resultData
+// }
+
+// func readJSONFile(filename string, result Result, excelDone chan<- bool) {
+// 	// Open the JSON file for reading.
+// 	file, err := os.Open(filename)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return
+// 	}
+// 	defer file.Close()
+
+// 	// Create a variable to hold the decoded JSON data.
+// 	var resultData Result
+
+// 	// Create a JSON decoder and decode the file into the resultData variable.
+// 	decoder := json.NewDecoder(file)
+// 	if err := decoder.Decode(&resultData); err != nil {
+// 		fmt.Println(err)
+// 		return
+// 	}
+
+// 	if result != resultData {
+// 		fmt.Println("Mismatch between calculated result and JSON data")
+// 		return
+// 	}
+
+// 	generateExcelAsync(result, excelDone)
+// }
+
+// func readJSONFile(filename string, result Result, excelDone chan<- bool) bool {
+// 	// Open the JSON file for reading.
+// 	file, err := os.Open(filename)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return false
+// 	}
+// 	defer file.Close()
+
+// 	// Create a variable to hold the decoded JSON data.
+// 	var resultData Result
+
+// 	// Create a JSON decoder and decode the file into the resultData variable.
+// 	decoder := json.NewDecoder(file)
+// 	if err := decoder.Decode(&resultData); err != nil {
+// 		fmt.Println(err)
+// 		return false
+// 	}
+
+// 	if result != resultData {
+// 		fmt.Println("Mismatch between calculated result and JSON data")
+// 		return false
+// 	}
+
+// 	if generateExcelAsync(result) {
+// 		excelDone <- true
+// 		return true
+// 	}
+
+// 	return false
+// }
+
+// func readJSONFile(filename string, result Result) {
+// 	// Open the JSON file for reading.
+// 	file, err := os.Open(filename)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return
+// 	}
+// 	defer file.Close()
+
+// 	// Create a variable to hold the decoded JSON data.
+// 	var resultData Result
+
+// 	// Create a JSON decoder and decode the file into the resultData variable.
+// 	decoder := json.NewDecoder(file)
+// 	if err := decoder.Decode(&resultData); err != nil {
+// 		fmt.Println(err)
+// 		return
+// 	}
+
+// 	if result != resultData {
+// 		fmt.Println("Mismatch between calculated result and JSON data")
+// 		return
+// 	}
+// }
+
+func readJSONFile(filename string, resultChan chan<- Result) {
 	// Open the JSON file for reading.
 	file, err := os.Open(filename)
-
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -30,8 +182,7 @@ func readJSONFile(filename string, fileResultChan chan<- Result, wg *sync.WaitGr
 		return
 	}
 
-	fileResultChan <- resultData
-
+	resultChan <- resultData
 }
 
 // func generateExcelAsync(resultChan <-chan Result, wg *sync.WaitGroup) {
@@ -439,7 +590,176 @@ func readJSONFile(filename string, fileResultChan chan<- Result, wg *sync.WaitGr
 // 	return nil
 // }
 
-func generateExcelAsync(fileResultChan chan Result, excelDone chan bool) error {
+// func generateExcelAsync(fileResultChan chan Result, excelDone chan bool) error {
+// 	f := excelize.NewFile()
+// 	// Create a new sheet.
+// 	index := f.NewSheet("Sheet1")
+
+// 	// Set the header row values.
+// 	f.SetCellValue("Sheet1", "A1", "Number")
+// 	f.SetCellValue("Sheet1", "B1", "Factorial")
+
+// 	rowIndex := 2 // Start from the second row
+// 	result := <-fileResultChan
+
+// 	cellA := fmt.Sprintf("A%d", rowIndex)
+// 	cellB := fmt.Sprintf("B%d", rowIndex)
+// 	f.SetCellValue("Sheet1", cellA, result.Number)
+// 	f.SetCellValue("Sheet1", cellB, result.Factorial)
+
+// 	// Set active sheet of the workbook.
+// 	f.SetActiveSheet(index)
+
+// 	// Save the spreadsheet.
+// 	if err := f.SaveAs("resultAsync.xlsx"); err != nil {
+// 		fmt.Println(err)
+// 		return err
+// 	}
+
+// 	//fmt.Println("Excel file generated successfully.")
+
+// 	// Signal Excel generation completion.
+// 	excelDone <- true
+
+// 	// Close the excelDone channel.
+// 	close(excelDone)
+
+// 	return nil
+// }
+
+// func generateExcelAsync(fileResultChan chan Result, excelDone chan bool) error {
+
+// 	f := excelize.NewFile()
+// 	// Create a new sheet.
+// 	index := f.NewSheet("Sheet1")
+
+// 	// Set the header row values.
+// 	f.SetCellValue("Sheet1", "A1", "Number")
+// 	f.SetCellValue("Sheet1", "B1", "Factorial")
+
+// 	rowIndex := 2 // Start from the second row
+// 	result := <-fileResultChan
+// 	fmt.Println(result)
+// 	cellA := fmt.Sprintf("A%d", rowIndex)
+// 	cellB := fmt.Sprintf("B%d", rowIndex)
+// 	f.SetCellValue("Sheet1", cellA, result.Number)
+// 	f.SetCellValue("Sheet1", cellB, result.Factorial)
+
+// 	// Set active sheet of the workbook.
+// 	f.SetActiveSheet(index)
+
+// 	// Save the spreadsheet.
+// 	if err := f.SaveAs("resultAsync.xlsx"); err != nil {
+// 		fmt.Println(err)
+// 		return err
+// 	}
+
+// 	//fmt.Println("Excel file generated successfully.")
+
+// 	// Signal Excel generation completion.
+// 	excelDone <- true
+
+// 	// Close the excelDone channel.
+// 	close(excelDone)
+
+// 	return nil
+// }
+
+// func generateExcelAsync(result Result, excelDone chan bool) error {
+// 	f := excelize.NewFile()
+// 	// Create a new sheet.
+// 	index := f.NewSheet("Sheet1")
+
+// 	// Set the header row values.
+// 	f.SetCellValue("Sheet1", "A1", "Number")
+// 	f.SetCellValue("Sheet1", "B1", "Factorial")
+
+// 	rowIndex := 2 // Start from the second row
+
+// 	//fmt.Println(result)
+// 	cellA := fmt.Sprintf("A%d", rowIndex)
+// 	cellB := fmt.Sprintf("B%d", rowIndex)
+// 	f.SetCellValue("Sheet1", cellA, result.Number)
+// 	f.SetCellValue("Sheet1", cellB, result.Factorial)
+
+// 	// Set active sheet of the workbook.
+// 	f.SetActiveSheet(index)
+
+// 	// Save the spreadsheet.
+// 	if err := f.SaveAs("resultAsync.xlsx"); err != nil {
+// 		fmt.Println(err)
+// 		return err
+// 	}
+
+// 	//fmt.Println("Excel file generated successfully.")
+
+// 	// Signal Excel generation completion.
+// 	excelDone <- true
+
+// 	return nil
+// }
+
+// func generateExcelAsync(result Result, excelDone chan<- bool) {
+// 	f := excelize.NewFile()
+// 	// Create a new sheet.
+// 	index := f.NewSheet("Sheet1")
+
+// 	// Set the header row values.
+// 	f.SetCellValue("Sheet1", "A1", "Number")
+// 	f.SetCellValue("Sheet1", "B1", "Factorial")
+
+// 	rowIndex := 2 // Start from the second row
+
+// 	//fmt.Println(result)
+// 	cellA := fmt.Sprintf("A%d", rowIndex)
+// 	cellB := fmt.Sprintf("B%d", rowIndex)
+// 	f.SetCellValue("Sheet1", cellA, result.Number)
+// 	f.SetCellValue("Sheet1", cellB, result.Factorial)
+
+// 	// Set active sheet of the workbook.
+// 	f.SetActiveSheet(index)
+
+// 	// Save the spreadsheet.
+// 	if err := f.SaveAs("resultAsync.xlsx"); err != nil {
+// 		fmt.Println(err)
+// 		return
+// 	}
+
+// 	//fmt.Println("Excel file generated successfully.")
+
+// 	// Signal Excel generation completion.
+// 	excelDone <- true
+// }
+
+// func generateExcelAsync(result Result) bool {
+// 	f := excelize.NewFile()
+// 	// Create a new sheet.
+// 	index := f.NewSheet("Sheet1")
+
+// 	// Set the header row values.
+// 	f.SetCellValue("Sheet1", "A1", "Number")
+// 	f.SetCellValue("Sheet1", "B1", "Factorial")
+
+// 	rowIndex := 2 // Start from the second row
+
+// 	cellA := fmt.Sprintf("A%d", rowIndex)
+// 	cellB := fmt.Sprintf("B%d", rowIndex)
+// 	f.SetCellValue("Sheet1", cellA, result.Number)
+// 	f.SetCellValue("Sheet1", cellB, result.Factorial)
+
+// 	// Set active sheet of the workbook.
+// 	f.SetActiveSheet(index)
+
+// 	// Save the spreadsheet.
+// 	if err := f.SaveAs("resultAsync.xlsx"); err != nil {
+// 		fmt.Println(err)
+// 		return false
+// 	}
+
+// 	return true
+// }
+
+func generateExcelAsync(result Result) bool {
 	f := excelize.NewFile()
 	// Create a new sheet.
 	index := f.NewSheet("Sheet1")
@@ -449,7 +769,6 @@ func generateExcelAsync(fileResultChan chan Result, excelDone chan bool) error {
 	f.SetCellValue("Sheet1", "B1", "Factorial")
 
 	rowIndex := 2 // Start from the second row
-	result := <-fileResultChan
 
 	cellA := fmt.Sprintf("A%d", rowIndex)
 	cellB := fmt.Sprintf("B%d", rowIndex)
@@ -462,16 +781,8 @@ func generateExcelAsync(fileResultChan chan Result, excelDone chan bool) error {
 	// Save the spreadsheet.
 	if err := f.SaveAs("resultAsync.xlsx"); err != nil {
 		fmt.Println(err)
-		return err
+		return false
 	}
 
-	//fmt.Println("Excel file generated successfully.")
-
-	// Signal Excel generation completion.
-	excelDone <- true
-
-	// Close the excelDone channel.
-	close(excelDone)
-
-	return nil
+	return true
 }
