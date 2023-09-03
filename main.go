@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"math/big"
-	"sync"
 )
 
 // func main() {
@@ -183,34 +182,51 @@ import (
 // 	fmt.Printf("Final Result: %d\n", finalResult)
 // }
 
+// func main() {
+// 	// Define the number for which we want to calculate the factorial.
+// 	num := 6
+
+// 	// Create a channel to collect results from goroutines.
+// 	resultChan := make(chan *big.Int, num)
+
+// 	// Create a WaitGroup to wait for all goroutines to finish.
+// 	var wg sync.WaitGroup
+
+// 	for i := 1; i <= num; i++ {
+// 		// Increment the WaitGroup counter for each goroutine.
+// 		wg.Add(1)
+
+// 		// Launch a goroutine to calculate factorial.
+// 		go factorial(i, &wg, resultChan)
+// 	}
+
+// 	// Close the result channel once all goroutines are done.
+// 	go func() {
+// 		wg.Wait()
+// 		close(resultChan)
+// 	}()
+
+// 	// Collect results from the channel and print the last result.
+// 	var finalResult *big.Int
+// 	for result := range resultChan {
+// 		finalResult = result
+// 	}
+// 	fmt.Printf("Factorial: %s\n", finalResult.String())
+// }
+
 func main() {
 	// Define the number for which we want to calculate the factorial.
-	num := 156
+	num := 2890
 
-	// Create a channel to collect results from goroutines.
-	resultChan := make(chan *big.Int, num)
+	// Create a channel to collect the result.
+	resultChan := make(chan *big.Int)
 
-	// Create a WaitGroup to wait for all goroutines to finish.
-	var wg sync.WaitGroup
+	// Launch a goroutine to calculate the factorial.
+	go factorial(num, resultChan)
 
-	for i := 1; i <= num; i++ {
-		// Increment the WaitGroup counter for each goroutine.
-		wg.Add(1)
+	// Collect the result from the channel.
+	finalResult := <-resultChan
 
-		// Launch a goroutine to calculate factorial.
-		go factorial(i, &wg, resultChan)
-	}
-
-	// Close the result channel once all goroutines are done.
-	go func() {
-		wg.Wait()
-		close(resultChan)
-	}()
-
-	// Collect results from the channel and print the last result.
-	var finalResult *big.Int
-	for result := range resultChan {
-		finalResult = result
-	}
-	fmt.Printf("Factorial: %s\n", finalResult.String())
+	// Print the result.
+	fmt.Printf("Factorial of %d: %s\n", num, finalResult.String())
 }
