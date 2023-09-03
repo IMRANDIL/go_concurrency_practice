@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"math/big"
+	"os"
+	"sync"
 )
 
 // func main() {
@@ -214,19 +216,123 @@ import (
 // 	fmt.Printf("Factorial: %s\n", finalResult.String())
 // }
 
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.The right way>>>>>>>>>>>
+
+// func main() {
+// 	// Define the number for which we want to calculate the factorial.
+// 	num := 2890
+
+// 	// Create a channel to collect the result.
+// 	resultChan := make(chan *big.Int)
+
+// 	// Launch a goroutine to calculate the factorial.
+// 	go factorial(num, resultChan)
+
+// 	// Collect the result from the channel.
+// 	finalResult := <-resultChan
+
+// 	// Print the result.
+// 	fmt.Printf("Factorial of %d: %s\n", num, finalResult.String())
+// }
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+type Result struct {
+	Number    int    `json:"number"`
+	Factorial string `json:"factorial"`
+}
+
+//synchronous one below
+
+// func main() {
+// 	num := 10 // Replace with the desired number.
+
+// 	// Calculate factorial.
+// 	factorialResult := factorialSync(num)
+
+// 	// Store the result in a JSON file.
+// 	result := Result{Number: num, Factorial: factorialResult}
+// 	file, _ := os.Create("result.json")
+// 	defer file.Close()
+// 	encoder := json.NewEncoder(file)
+// 	encoder.Encode(result)
+
+// 	// Convert the JSON file to an Excel spreadsheet (not implemented here).
+// 	fmt.Println("Synchronous execution completed.")
+// }
+
+//asynchroous way below
+
+// func main() {
+// 	num := 10 // Replace with the desired number.
+
+// 	// Create a WaitGroup to wait for all goroutines to finish.
+// 	var wg sync.WaitGroup
+
+// 	// Calculate factorial concurrently.
+// 	var factorialResult string
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		factorialResult = factorialAsync(num)
+// 		fmt.Println(factorialResult)
+// 	}()
+
+// 	// Store the result in a JSON file concurrently.
+// 	wg.Add(1)
+// 	go func() {
+// 		defer wg.Done()
+// 		result := Result{Number: num, Factorial: factorialResult}
+// 		file, _ := os.Create("resultAsync.json")
+// 		defer file.Close()
+// 		encoder := json.NewEncoder(file)
+// 		encoder.Encode(result)
+// 	}()
+
+// 	// Convert the JSON file to an Excel spreadsheet (not implemented here).
+
+// 	// Wait for all goroutines to finish.
+// 	wg.Wait()
+
+// 	fmt.Println("Asynchronous execution completed.")
+// }
+
 func main() {
-	// Define the number for which we want to calculate the factorial.
-	num := 2890
+	num := 10 // Replace with the desired number.
 
-	// Create a channel to collect the result.
-	resultChan := make(chan *big.Int)
+	// Create a WaitGroup to wait for all goroutines to finish.
+	var wg sync.WaitGroup
 
-	// Launch a goroutine to calculate the factorial.
-	go factorial(num, resultChan)
+	// Create a channel to collect results.
+	resultChan := make(chan Result, 1)
 
-	// Collect the result from the channel.
-	finalResult := <-resultChan
+	// Calculate factorial concurrently.
+	wg.Add(1)
+	go factorialAsync(num, resultChan, &wg)
 
-	// Print the result.
-	fmt.Printf("Factorial of %d: %s\n", num, finalResult.String())
+	// Store the result in a JSON file concurrently.
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		result := <-resultChan // Wait for the result from the channel.
+		file, err := os.Create("resultAsync.json")
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+		defer file.Close()
+		encoder := json.NewEncoder(file)
+		err = encoder.Encode(result)
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+	}()
+
+	// Convert the JSON file to an Excel spreadsheet (not implemented here).
+
+	// Wait for all goroutines to finish.
+	wg.Wait()
+
+	fmt.Println("Asynchronous execution completed.")
 }
