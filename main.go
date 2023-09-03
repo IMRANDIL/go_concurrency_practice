@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math/big"
 	"os"
 	"sync"
 )
@@ -298,13 +299,13 @@ type Result struct {
 // }
 
 func main() {
-	num := 10 // Replace with the desired number.
+	num := 100 // Replace with the desired number.
 
 	// Create a WaitGroup to wait for all goroutines to finish.
 	var wg sync.WaitGroup
 
 	// Create a channel to collect results.
-	resultChan := make(chan Result, 1)
+	resultChan := make(chan *big.Int)
 
 	// Calculate factorial concurrently.
 	wg.Add(1)
@@ -314,7 +315,8 @@ func main() {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		result := <-resultChan // Wait for the result from the channel.
+		factorialResult := <-resultChan // Wait for the result from the channel.
+		result := Result{Number: num, Factorial: factorialResult.String()}
 		file, err := os.Create("resultAsync.json")
 		if err != nil {
 			fmt.Println("Error:", err)

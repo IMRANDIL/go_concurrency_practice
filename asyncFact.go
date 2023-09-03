@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"math/big"
 	"sync"
 )
 
@@ -14,11 +14,11 @@ import (
 // 	return fmt.Sprintf("%d", result)
 // }
 
-func factorialAsync(n int, resultChan chan<- Result, wg *sync.WaitGroup) {
+func factorialAsync(n int, resultChan chan<- *big.Int, wg *sync.WaitGroup) {
 	defer wg.Done()
-	result := 1
+	result := new(big.Int).SetInt64(1)
 	for i := 1; i <= n; i++ {
-		result *= i
+		result.Mul(result, big.NewInt(int64(i)))
 	}
-	resultChan <- Result{Number: n, Factorial: fmt.Sprintf("%d", result)}
+	resultChan <- result
 }
